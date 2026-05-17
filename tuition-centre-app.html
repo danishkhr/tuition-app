@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>BrightPath Tuition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  /* ── RESET & TOKENS ─────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --bg: #F4F6FA;
+    --surface: #FFFFFF;
+    --surface2: #F0F3FA;
+    --primary: #3A6FD8;
+    --primary-light: #E8EEFB;
+    --primary-dark: #2952B3;
+    --accent: #2DB89A;
+    --accent-light: #E4F7F3;
+    --warn: #F59E0B;
+    --warn-light: #FEF3C7;
+    --danger: #EF4444;
+    --danger-light: #FEE2E2;
+    --success: #10B981;
+    --success-light: #D1FAE5;
+    --text: #1A2035;
+    --text2: #5A6484;
+    --text3: #9BA3BA;
+    --border: #E6EAF4;
+    --shadow-sm: 0 2px 8px rgba(58,111,216,0.07);
+    --shadow-md: 0 6px 24px rgba(58,111,216,0.12);
+    --shadow-lg: 0 16px 48px rgba(58,111,216,0.18);
+    --radius-sm: 10px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
+    --font: 'DM Sans', sans-serif;
+    --font-display: 'DM Serif Display', serif;
+    --nav-h: 72px;
+  }
+
+  html, body {
+    height: 100%;
+    background: #1A2035;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── PHONE SHELL ─────────────────────────────────────────── */
+  #phone {
+    width: 390px;
+    height: 844px;
+    background: var(--bg);
+    border-radius: 48px;
+    box-shadow: 0 40px 120px rgba(0,0,0,0.6), inset 0 0 0 1.5px rgba(255,255,255,0.15);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Status bar */
+  .status-bar {
+    height: 44px;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    flex-shrink: 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.02em;
+    z-index: 100;
+  }
+  .status-bar .time { font-weight: 700; font-size: 15px; }
+  .status-icons { display: flex; gap: 6px; align-items: center; }
+  .status-icons svg { width: 16px; height: 16px; fill: var(--text); }
+
+  /* ── SCREENS ─────────────────────────────────────────────── */
+  #app {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .screen {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    background: var(--bg);
+    overflow: hidden;
+  }
+  .screen.active { display: flex; animation: screenIn 0.35s cubic-bezier(0.22,1,0.36,1); }
+
+  @keyframes screenIn {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 90px;
+    scrollbar-width: none;
+  }
+  .scroll-area::-webkit-scrollbar { display: none; }
+
+  /* ── LOGIN ───────────────────────────────────────────────── */
+  #screen-login {
+    background: linear-gradient(160deg, #2952B3 0%, #3A6FD8 45%, #2DB89A 100%);
+  }
+
+  .login-top {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 32px 0;
+    gap: 16px;
+  }
+
+  .login-logo {
+    width: 72px; height: 72px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 22px;
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(8px);
+    border: 1.5px solid rgba(255,255,255,0.3);
+    margin-bottom: 8px;
+  }
+  .login-logo svg { width: 40px; height: 40px; }
+
+  .login-brand { font-family: var(--font-display); font-size: 34px; color: #fff; text-align: center; line-height: 1.1; }
+  .login-sub { font-size: 14px; color: rgba(255,255,255,0.7); text-align: center; letter-spacing: 0.03em; }
+
+  .login-card {
+    background: var(--surface);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    padding: 36px 28px 40px;
+    margin-top: 32px;
+  }
+
+  .login-card h2 { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .login-card p { font-size: 14px; color: var(--text2); margin-bottom: 28px; }
+
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+  .field input, .field select {
+    width: 100%; height: 52px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface2);
+    padding: 0 16px;
+    font-family: var(--font); font-size: 15px; color: var(--text);
+    outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none; appearance: none;
+  }
+  .field input:focus, .field select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+
+  .role-selector { display: flex; gap: 8px; margin-bottom: 24px; }
+  .role-btn {
+    flex: 1; height: 44px; border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm); background: var(--surface2);
+    font-family: var(--font); font-size: 13px; font-weight: 600; color: var(--text2);
+    cursor: pointer; transition: all 0.2s;
+  }
+  .role-btn.active { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
+
+  .btn-primary {
+    width: 100%; height: 54px;
+    background: linear-gradient(135deg, var(--primary) 0%, #4A7FE8 100%);
+    border: none; border-radius: var(--radius-md);
+    font-family: var(--font); font-size: 16px; font-weight: 700; color: #fff;
+    cursor: pointer; transition: all 0.2s;
+    box-shadow: 0 6px 20px rgba(58,111,216,0.35);
+    letter-spacing: 0.01em;
+  }
+  .btn-primary:active { transform: scale(0.98); box-shadow: 0 3px 10px rgba(58,111,216,0.3); }
+
+  /* ── TOP BAR ─────────────────────────────────────────────── */
+  .top-bar {
+    height: 64px;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    z-index: 10;
+  }
+  .top-bar .brand { font-family: var(--font-display); font-size: 22px; color: var(--primary); }
+  .top-bar .user-chip {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface2); border-radius: 50px;
+    padding: 6px 12px 6px 6px;
+  }
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: #fff;
+  }
+  .user-name { font-size: 13px; font-weight: 600; color: var(--text); }
+
+  /* ── BOTTOM NAV ──────────────────────────────────────────── */
+  .bottom-nav {
+    height: var(--nav-h);
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 50;
+  }
+  .nav-item {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 4px;
+    cursor: pointer; transition: all 0.2s;
+    border: none; background: none; font-family: var(--font);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nav-item svg { width: 22px; height: 22px; transition: all 0.2s; }
+  .nav-item span { font-size: 10px; font-weight: 600; color: var(--text3); transition: color 0.2s; letter-spacing: 0.03em; }
+  .nav-item svg path, .nav-item svg rect, .nav-item svg circle { transition: all 0.2s; }
+
+  .nav-item.active span { color: var(--primary); }
+  .nav-item.active svg path, .nav-item.active svg rect { fill: var(--primary); }
+
+  /* role switcher in nav */
+  .role-switch-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    padding: 8px 16px;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .role-tab {
+    flex: 1; height: 36px;
+    border: 1.5px solid var(--border);
+    border-radius: 50px; background: transparent;
+    font-family: var(--font); font-size: 12px; font-weight: 700;
+    color: var(--text2); cursor: pointer; transition: all 0.2s;
+    letter-spacing: 0.03em;
+  }
+  .role-tab.active { background: var(--primary); border-color: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(58,111,216,0.3); }
+
+  /* ── CARDS ───────────────────────────────────────────────── */
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    margin: 0 16px 14px;
+  }
+  .card-title {
+    font-size: 11px; font-weight: 700; color: var(--text3);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    margin-bottom: 14px;
+  }
+
+  /* ── SECTION HEADER ──────────────────────────────────────── */
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 20px 12px;
+  }
+  .section-header h2 { font-size: 18px; font-weight: 700; color: var(--text); }
+  .section-header a { font-size: 13px; color: var(--primary); font-weight: 600; cursor: pointer; text-decoration: none; }
+
+  /* ── GREETING BANNER ─────────────────────────────────────── */
+  .greeting-banner {
+    background: linear-gradient(135deg, var(--primary) 0%, #4A7FE8 60%, #5B8AEA 100%);
+    margin: 0 16px 14px;
+    border-radius: var(--radius-lg);
+    padding: 22px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .greeting-banner::before {
+    content: '';
+    position: absolute; top: -30px; right: -20px;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+  }
+  .greeting-banner::after {
+    content: '';
+    position: absolute; bottom: -40px; right: 30px;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+  }
+  .greeting-banner .date-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.15); border-radius: 50px;
+    padding: 4px 12px; font-size: 11px; font-weight: 600;
+    color: rgba(255,255,255,0.9); margin-bottom: 10px;
+  }
+  .greeting-banner h1 { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .greeting-banner p { font-size: 13px; color: rgba(255,255,255,0.75); }
+
+  /* ── CHILDREN TABS ───────────────────────────────────────── */
+  .child-tabs {
+    display: flex; gap: 10px;
+    padding: 0 16px 14px;
+    overflow-x: auto; scrollbar-width: none;
+  }
+  .child-tabs::-webkit-scrollbar { display: none; }
+  .child-tab {
+    flex-shrink: 0;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    cursor: pointer;
+  }
+  .child-avatar {
+    width: 52px; height: 52px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    border: 2.5px solid var(--border);
+    background: var(--surface);
+    transition: all 0.2s;
+    position: relative;
+  }
+  .child-tab.active .child-avatar {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px var(--primary-light);
+  }
+  .child-tab span { font-size: 11px; font-weight: 600; color: var(--text2); }
+  .child-tab.active span { color: var(--primary); }
+
+  /* ── TODAY CLASS CARD ────────────────────────────────────── */
+  .today-class {
+    background: linear-gradient(135deg, #F8FAFF 0%, #EEF3FF 100%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .class-time-col { text-align: center; flex-shrink: 0; }
+  .class-time { font-size: 14px; font-weight: 700; color: var(--primary); }
+  .class-dur { font-size: 10px; color: var(--text3); font-weight: 500; }
+  .class-divider { width: 1px; height: 36px; background: var(--border); flex-shrink: 0; }
+  .class-info { flex: 1; }
+  .class-name { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+  .class-tutor { font-size: 12px; color: var(--text2); }
+  .class-badge {
+    padding: 4px 10px; border-radius: 50px;
+    font-size: 11px; font-weight: 700;
+    background: var(--accent-light); color: var(--accent);
+  }
+
+  /* ── ATTENDANCE BAR ──────────────────────────────────────── */
+  .attendance-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .att-stat {
+    background: var(--surface2); border-radius: var(--radius-sm);
+    padding: 12px 10px; text-align: center;
+  }
+  .att-num { font-size: 22px; font-weight: 800; color: var(--text); }
+  .att-label { font-size: 10px; color: var(--text3); font-weight: 600; margin-top: 2px; }
+  .att-num.green { color: var(--success); }
+  .att-num.warn { color: var(--warn); }
+  .att-num.red { color: var(--danger); }
+
+  .progress-bar-wrap { margin-top: 14px; }
+  .progress-bar-label { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 6px; }
+  .progress-bar { height: 8px; background: var(--surface2); border-radius: 50px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 50px; transition: width 0.6s cubic-bezier(0.22,1,0.36,1); }
+
+  /* ── PAYMENT STATUS CARD ─────────────────────────────────── */
+  .pay-status-card {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin: 0 16px 14px;
+    box-shadow: var(--shadow-md);
+  }
+  .pay-header {
+    padding: 18px 20px 14px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .pay-header.unpaid { background: linear-gradient(135deg, #FEF3C7, #FDE68A); }
+  .pay-header.paid { background: linear-gradient(135deg, #D1FAE5, #A7F3D0); }
+  .pay-status-badge {
+    padding: 5px 14px; border-radius: 50px;
+    font-size: 12px; font-weight: 800; letter-spacing: 0.04em;
+  }
+  .pay-status-badge.unpaid { background: var(--warn); color: #fff; }
+  .pay-status-badge.paid { background: var(--success); color: #fff; }
+  .pay-amount { font-size: 28px; font-weight: 800; color: var(--text); }
+  .pay-period { font-size: 12px; color: var(--text2); font-weight: 500; }
+  .pay-body { padding: 14px 20px; background: var(--surface); }
+  .pay-due { font-size: 13px; color: var(--text2); margin-bottom: 14px; }
+  .pay-due strong { color: var(--danger); }
+
+  /* ── PAY NOW BUTTON ──────────────────────────────────────── */
+  .btn-pay {
+    width: 100%; height: 50px;
+    background: linear-gradient(135deg, var(--primary) 0%, #4A7FE8 100%);
+    border: none; border-radius: var(--radius-md);
+    font-family: var(--font); font-size: 15px; font-weight: 700; color: #fff;
+    cursor: pointer; transition: all 0.2s;
+    box-shadow: 0 6px 18px rgba(58,111,216,0.3);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-pay:active { transform: scale(0.98); }
+  .btn-pay.paid {
+    background: var(--surface2); color: var(--text2);
+    box-shadow: none;
+  }
+  .btn-receipt {
+    width: 100%; height: 46px; margin-top: 10px;
+    background: var(--accent-light); border: 1.5px solid var(--accent);
+    border-radius: var(--radius-md);
+    font-family: var(--font); font-size: 14px; font-weight: 700; color: var(--accent);
+    cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-receipt:active { transform: scale(0.98); }
+
+  /* ── PAYMENT HISTORY ─────────────────────────────────────── */
+  .pay-history-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .pay-history-item:last-child { border-bottom: none; }
+  .pay-hist-left { display: flex; align-items: center; gap: 12px; }
+  .pay-hist-icon {
+    width: 38px; height: 38px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .pay-hist-month { font-size: 14px; font-weight: 700; color: var(--text); }
+  .pay-hist-date { font-size: 11px; color: var(--text3); font-weight: 500; }
+  .pay-hist-amount { font-size: 15px; font-weight: 800; color: var(--text); }
+  .pay-chip {
+    display: inline-block; padding: 2px 8px; border-radius: 50px;
+    font-size: 10px; font-weight: 700; margin-top: 2px;
+  }
+  .pay-chip.paid { background: var(--success-light); color: var(--success); }
+  .pay-chip.pending { background: var(--warn-light); color: var(--warn); }
+
+  /* ── ANNOUNCEMENTS ───────────────────────────────────────── */
+  .announce-item {
+    display: flex; gap: 12px; padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .announce-item:last-child { border-bottom: none; }
+  .announce-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    flex-shrink: 0; margin-top: 4px;
+  }
+  .announce-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+  .announce-body { font-size: 12px; color: var(--text2); line-height: 1.5; }
+  .announce-time { font-size: 11px; color: var(--text3); font-weight: 500; margin-top: 4px; }
+
+  /* ── MODAL OVERLAY ───────────────────────────────────────── */
+  .modal-overlay {
+    position: absolute; inset: 0;
+    background: rgba(26,32,53,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-overlay.visible { opacity: 1; }
+
+  .modal-sheet {
+    width: 100%;
+    background: var(--surface);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    padding: 0 0 40px;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+    max-height: 85%;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  .modal-sheet::-webkit-scrollbar { display: none; }
+  .modal-overlay.visible .modal-sheet { transform: translateY(0); }
+
+  .modal-handle {
+    width: 40px; height: 4px; background: var(--border);
+    border-radius: 50px; margin: 14px auto 0;
+  }
+  .modal-header {
+    padding: 20px 24px 0;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .modal-title { font-size: 20px; font-weight: 800; color: var(--text); }
+  .modal-close {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--surface2); border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 18px; color: var(--text2);
+    font-family: var(--font);
+  }
+
+  /* ── PAYMENT MODAL STEPS ─────────────────────────────────── */
+  .modal-step { display: none; animation: stepIn 0.3s cubic-bezier(0.22,1,0.36,1); }
+  .modal-step.active { display: block; }
+  @keyframes stepIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .step-indicator {
+    display: flex; align-items: center; gap: 6px;
+    padding: 16px 24px 0;
+  }
+  .step-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border); transition: all 0.3s;
+  }
+  .step-dot.active { background: var(--primary); width: 24px; border-radius: 50px; }
+  .step-dot.done { background: var(--success); }
+
+  .modal-body { padding: 20px 24px 0; }
+
+  .fee-option {
+    border: 2px solid var(--border); border-radius: var(--radius-md);
+    padding: 16px; margin-bottom: 12px; cursor: pointer;
+    transition: all 0.2s; display: flex; align-items: center; justify-content: space-between;
+  }
+  .fee-option.selected { border-color: var(--primary); background: var(--primary-light); }
+  .fee-option-left .fee-name { font-size: 15px; font-weight: 700; color: var(--text); }
+  .fee-option-left .fee-desc { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .fee-option-right .fee-amount { font-size: 20px; font-weight: 800; color: var(--primary); }
+  .fee-option-right .fee-vat { font-size: 10px; color: var(--text3); text-align: right; }
+  .fee-radio {
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 2px solid var(--border); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .fee-option.selected .fee-radio { border-color: var(--primary); background: var(--primary); }
+  .fee-option.selected .fee-radio::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+
+  .bank-info-card {
+    background: var(--surface2); border-radius: var(--radius-md);
+    padding: 18px; margin-bottom: 14px;
+  }
+  .bank-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dashed var(--border); }
+  .bank-row:last-child { border-bottom: none; }
+  .bank-key { font-size: 12px; color: var(--text3); font-weight: 500; }
+  .bank-val { font-size: 14px; font-weight: 700; color: var(--text); }
+  .bank-val.highlight { color: var(--primary); font-size: 18px; }
+
+  .info-note {
+    background: var(--warn-light); border-radius: var(--radius-sm);
+    padding: 12px 14px; font-size: 12px; color: #92400E;
+    line-height: 1.5; margin-bottom: 16px;
+    display: flex; gap: 8px;
+  }
+  .info-note span { flex-shrink: 0; }
+
+  .success-state {
+    text-align: center; padding: 16px 24px 0;
+  }
+  .success-icon {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: var(--success-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px; margin: 0 auto 16px;
+    animation: popIn 0.5s cubic-bezier(0.22,1,0.36,1);
+  }
+  @keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    70% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .success-title { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+  .success-sub { font-size: 14px; color: var(--text2); margin-bottom: 20px; line-height: 1.5; }
+  .receipt-card {
+    background: var(--surface2); border-radius: var(--radius-md);
+    padding: 16px; text-align: left; margin-bottom: 16px;
+    border: 1px dashed var(--border);
+  }
+  .receipt-row { display: flex; justify-content: space-between; padding: 6px 0; }
+  .receipt-key { font-size: 12px; color: var(--text3); }
+  .receipt-val { font-size: 13px; font-weight: 700; color: var(--text); }
+  .receipt-total { font-size: 16px; font-weight: 800; color: var(--primary); border-top: 1px solid var(--border); padding-top: 10px; margin-top: 6px; }
+
+  /* ── TUTOR VIEW ──────────────────────────────────────────── */
+  .class-card {
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    padding: 16px;
+    margin-bottom: 12px;
+    border-left: 4px solid var(--primary);
+    box-shadow: var(--shadow-sm);
+  }
+  .class-card .cc-name { font-size: 16px; font-weight: 700; color: var(--text); }
+  .class-card .cc-meta { font-size: 13px; color: var(--text2); margin-top: 3px; }
+  .class-card .cc-time { font-size: 12px; color: var(--primary); font-weight: 600; margin-top: 6px; }
+
+  .student-att-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 0; border-bottom: 1px solid var(--border);
+  }
+  .student-att-row:last-child { border-bottom: none; }
+  .student-att-name { font-size: 14px; font-weight: 600; color: var(--text); }
+  .att-btns { display: flex; gap: 8px; }
+  .btn-present, .btn-absent {
+    height: 32px; padding: 0 14px; border-radius: 50px;
+    font-family: var(--font); font-size: 12px; font-weight: 700;
+    border: 1.5px solid var(--border); cursor: pointer; transition: all 0.2s;
+  }
+  .btn-present { color: var(--success); background: var(--surface); }
+  .btn-absent { color: var(--danger); background: var(--surface); }
+  .btn-present.active { background: var(--success); color: #fff; border-color: var(--success); }
+  .btn-absent.active { background: var(--danger); color: #fff; border-color: var(--danger); }
+
+  /* ── ADMIN VIEW ──────────────────────────────────────────── */
+  .student-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 0; border-bottom: 1px solid var(--border);
+  }
+  .student-row:last-child { border-bottom: none; }
+  .student-ava {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+    flex-shrink: 0;
+  }
+  .student-name { font-size: 14px; font-weight: 700; color: var(--text); }
+  .student-grade { font-size: 12px; color: var(--text2); }
+  .student-row .pay-chip { margin-left: auto; }
+
+  .admin-pay-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 0; border-bottom: 1px solid var(--border);
+  }
+  .admin-pay-row:last-child { border-bottom: none; }
+  .admin-pay-name { font-size: 14px; font-weight: 700; color: var(--text); }
+  .admin-pay-sub { font-size: 12px; color: var(--text2); }
+  .admin-pay-right { text-align: right; }
+  .admin-pay-amt { font-size: 15px; font-weight: 800; color: var(--text); }
+
+  .btn-approve {
+    height: 30px; padding: 0 14px; border-radius: 50px;
+    background: var(--primary-light); color: var(--primary);
+    border: none; font-family: var(--font); font-size: 12px; font-weight: 700;
+    cursor: pointer; margin-top: 4px; transition: all 0.2s;
+  }
+  .btn-approve:active { background: var(--primary); color: #fff; }
+  .btn-approve.approved { background: var(--success-light); color: var(--success); }
+
+  .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .stat-box {
+    background: var(--surface2); border-radius: var(--radius-md); padding: 16px;
+    text-align: center;
+  }
+  .stat-box .num { font-size: 26px; font-weight: 800; color: var(--primary); }
+  .stat-box .lbl { font-size: 11px; color: var(--text3); font-weight: 600; margin-top: 3px; }
+
+  /* ── MISC ─────────────────────────────────────────────────── */
+  .divider { height: 1px; background: var(--border); margin: 0 16px 14px; }
+  .pt-12 { padding-top: 12px; }
+  .toast {
+    position: absolute; top: 60px; left: 50%; transform: translateX(-50%) translateY(-20px);
+    background: var(--text); color: #fff; padding: 10px 20px;
+    border-radius: 50px; font-size: 13px; font-weight: 600;
+    opacity: 0; transition: all 0.3s; z-index: 500; white-space: nowrap;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .empty-state { text-align: center; padding: 30px 20px; color: var(--text3); font-size: 14px; }
+
+  /* Section padding */
+  .p-section { padding: 0 16px; }
+
+</style>
+</head>
+<body>
+
+<div id="phone">
+  <!-- STATUS BAR -->
+  <div class="status-bar" id="statusBar" style="display:none">
+    <span class="time">9:41</span>
+    <div class="status-icons">
+      <svg viewBox="0 0 24 24"><path d="M1 1l22 22M16.72 11.06A10.94 10.94 0 0119 12.55M5 12.55a10.94 10.94 0 015.17-2.39M10.71 5.05A16 16 0 0122.56 9M1.42 9a15.91 15.91 0 014.7-2.88M8.53 16.11a6 6 0 016.95 0M12 20h.01" stroke="#1A2035" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+      <svg viewBox="0 0 24 24"><rect x="2" y="7" width="18" height="11" rx="2" fill="#1A2035"/><path d="M22 11v4" stroke="#1A2035" stroke-width="2" stroke-linecap="round"/></svg>
+    </div>
+  </div>
+
+  <div id="app">
+
+    <!-- ══ LOGIN SCREEN ═══════════════════════════════════════ -->
+    <div class="screen active" id="screen-login">
+      <div class="login-top">
+        <div class="login-logo">
+          <svg viewBox="0 0 40 40" fill="none">
+            <path d="M8 30 L20 8 L32 30" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 22 L28 22" stroke="white" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="20" cy="33" r="3" fill="white"/>
+          </svg>
+        </div>
+        <div class="login-brand">BrightPath</div>
+        <div class="login-sub">Tuition Centre Management</div>
+      </div>
+      <div class="login-card">
+        <h2>Welcome back 👋</h2>
+        <p>Sign in to your account to continue</p>
+
+        <div class="role-selector" id="loginRoles">
+          <button class="role-btn active" data-role="parent" onclick="setLoginRole('parent',this)">Parent</button>
+          <button class="role-btn" data-role="tutor" onclick="setLoginRole('tutor',this)">Tutor</button>
+          <button class="role-btn" data-role="admin" onclick="setLoginRole('admin',this)">Admin</button>
+        </div>
+
+        <div class="field">
+          <label>Email / Phone</label>
+          <input type="text" placeholder="Enter your email or phone" id="loginEmail">
+        </div>
+        <div class="field" style="margin-bottom:24px">
+          <label>Password</label>
+          <input type="password" placeholder="••••••••" id="loginPass">
+        </div>
+        <button class="btn-primary" onclick="doLogin()">Sign In</button>
+        <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--text3)">Any credentials work for this prototype</p>
+      </div>
+    </div>
+
+    <!-- ══ MAIN APP ════════════════════════════════════════════ -->
+    <div class="screen" id="screen-main">
+
+      <!-- TOP BAR -->
+      <div class="top-bar">
+        <div class="brand">BrightPath</div>
+        <div class="user-chip">
+          <div class="avatar" id="mainAvatar">S</div>
+          <span class="user-name" id="mainUserName">Sarah Lim</span>
+        </div>
+      </div>
+
+      <!-- ROLE SWITCHER -->
+      <div class="role-switch-bar">
+        <button class="role-tab active" onclick="switchRole('parent',this)">Parent</button>
+        <button class="role-tab" onclick="switchRole('tutor',this)">Tutor</button>
+        <button class="role-tab" onclick="switchRole('admin',this)">Admin</button>
+      </div>
+
+      <!-- PARENT VIEW -->
+      <div id="view-parent" class="scroll-area">
+
+        <!-- Greeting -->
+        <div style="height:14px"></div>
+        <div class="greeting-banner">
+          <div class="date-badge">📅 Sunday, 17 May 2026</div>
+          <h1>Good morning, Sarah! ☀️</h1>
+          <p>2 classes scheduled today for your children</p>
+        </div>
+
+        <!-- Children -->
+        <div class="section-header" style="padding-bottom:0">
+          <h2>Your Children</h2>
+          <a>+ Add Child</a>
+        </div>
+        <div class="child-tabs" style="padding-top:12px">
+          <div class="child-tab active" onclick="selectChild(0,this)">
+            <div class="child-avatar">🧒</div>
+            <span>Ethan</span>
+          </div>
+          <div class="child-tab" onclick="selectChild(1,this)">
+            <div class="child-avatar">👧</div>
+            <span>Mia</span>
+          </div>
+          <div class="child-tab" onclick="selectChild(2,this)" style="opacity:0.5">
+            <div class="child-avatar" style="font-size:22px;background:var(--surface2);border-style:dashed">+</div>
+            <span style="color:var(--text3)">Add</span>
+          </div>
+        </div>
+
+        <!-- Today's Class -->
+        <div class="card">
+          <div class="card-title">Today's Class</div>
+          <div class="today-class">
+            <div class="class-time-col">
+              <div class="class-time" id="classTime">10:00 AM</div>
+              <div class="class-dur" id="classDur">90 min</div>
+            </div>
+            <div class="class-divider"></div>
+            <div class="class-info">
+              <div class="class-name" id="className">Mathematics Sec 3</div>
+              <div class="class-tutor" id="classTutor">Mr Ahmad Fariz</div>
+            </div>
+            <div class="class-badge" id="classBadge">Today</div>
+          </div>
+          <div class="today-class" style="margin-top:10px" id="class2Row">
+            <div class="class-time-col">
+              <div class="class-time">3:00 PM</div>
+              <div class="class-dur">60 min</div>
+            </div>
+            <div class="class-divider"></div>
+            <div class="class-info">
+              <div class="class-name" id="className2">English Sec 3</div>
+              <div class="class-tutor" id="classTutor2">Ms Priya Nair</div>
+            </div>
+            <div class="class-badge" style="background:var(--primary-light);color:var(--primary)">Later</div>
+          </div>
+        </div>
+
+        <!-- Attendance -->
+        <div class="card">
+          <div class="card-title">Attendance — May 2026</div>
+          <div class="attendance-stats">
+            <div class="att-stat">
+              <div class="att-num green" id="attPresent">14</div>
+              <div class="att-label">Present</div>
+            </div>
+            <div class="att-stat">
+              <div class="att-num warn" id="attLate">2</div>
+              <div class="att-label">Late</div>
+            </div>
+            <div class="att-stat">
+              <div class="att-num red" id="attAbsent">1</div>
+              <div class="att-label">Absent</div>
+            </div>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-label">
+              <span>Attendance Rate</span>
+              <span id="attRate">82%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="attBar" style="width:82%;background:linear-gradient(90deg,var(--success),var(--accent))"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Status -->
+        <div class="card-title" style="padding:0 20px;margin-bottom:0">
+          <span style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em">Payment Status</span>
+        </div>
+        <div class="pay-status-card" id="payCard">
+          <div class="pay-header unpaid" id="payHeader">
+            <div>
+              <div class="pay-amount" id="payAmount">RM 320.00</div>
+              <div class="pay-period" id="payPeriod">June 2026 Tuition Fee</div>
+            </div>
+            <div class="pay-status-badge unpaid" id="payBadge">UNPAID</div>
+          </div>
+          <div class="pay-body">
+            <div class="pay-due" id="payDue">Due by <strong>1 June 2026</strong> — Please pay on time to avoid late fees.</div>
+            <button class="btn-pay" id="payBtn" onclick="openPayModal()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="3" stroke="white" stroke-width="2"/><path d="M2 9h20" stroke="white" stroke-width="2"/></svg>
+              Pay Now
+            </button>
+            <button class="btn-receipt" id="receiptBtn" style="display:none" onclick="fakeDownload()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3v13m0 0l-4-4m4 4l4-4" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/><path d="M3 20h18" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/></svg>
+              Download Receipt
+            </button>
+          </div>
+        </div>
+
+        <!-- Payment History -->
+        <div class="card">
+          <div class="card-title">Payment History</div>
+          <div class="pay-history-item">
+            <div class="pay-hist-left">
+              <div class="pay-hist-icon" style="background:var(--success-light)">✅</div>
+              <div>
+                <div class="pay-hist-month">May 2026</div>
+                <div class="pay-hist-date">Paid on 28 Apr 2026</div>
+              </div>
+            </div>
+            <div style="text-align:right">
+              <div class="pay-hist-amount">RM 320</div>
+              <div class="pay-chip paid">PAID</div>
+            </div>
+          </div>
+          <div class="pay-history-item">
+            <div class="pay-hist-left">
+              <div class="pay-hist-icon" style="background:var(--success-light)">✅</div>
+              <div>
+                <div class="pay-hist-month">April 2026</div>
+                <div class="pay-hist-date">Paid on 30 Mar 2026</div>
+              </div>
+            </div>
+            <div style="text-align:right">
+              <div class="pay-hist-amount">RM 320</div>
+              <div class="pay-chip paid">PAID</div>
+            </div>
+          </div>
+          <div class="pay-history-item">
+            <div class="pay-hist-left">
+              <div class="pay-hist-icon" style="background:var(--success-light)">✅</div>
+              <div>
+                <div class="pay-hist-month">March 2026</div>
+                <div class="pay-hist-date">Paid on 2 Mar 2026</div>
+              </div>
+            </div>
+            <div style="text-align:right">
+              <div class="pay-hist-amount">RM 320</div>
+              <div class="pay-chip paid">PAID</div>
+            </div>
+          </div>
+          <div class="pay-history-item" id="juneHistoryRow" style="display:none">
+            <div class="pay-hist-left">
+              <div class="pay-hist-icon" style="background:var(--success-light)">✅</div>
+              <div>
+                <div class="pay-hist-month">June 2026</div>
+                <div class="pay-hist-date" id="junePaidDate">Paid today</div>
+              </div>
+            </div>
+            <div style="text-align:right">
+              <div class="pay-hist-amount" id="juneAmount">RM 320</div>
+              <div class="pay-chip paid">PAID</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Announcements -->
+        <div class="card">
+          <div class="card-title">Announcements 📢</div>
+          <div class="announce-item">
+            <div class="announce-dot" style="background:var(--danger)"></div>
+            <div>
+              <div class="announce-title">Mid-Year Exam Preparation Schedule</div>
+              <div class="announce-body">Additional classes will be held every Saturday in June. Please ensure attendance as these are exam-focused revision sessions.</div>
+              <div class="announce-time">2 hours ago</div>
+            </div>
+          </div>
+          <div class="announce-item">
+            <div class="announce-dot" style="background:var(--primary)"></div>
+            <div>
+              <div class="announce-title">Public Holiday — 25 May</div>
+              <div class="announce-body">The centre will be closed on 25 May 2026 for Wesak Day. All classes are cancelled on that day.</div>
+              <div class="announce-time">Yesterday</div>
+            </div>
+          </div>
+          <div class="announce-item">
+            <div class="announce-dot" style="background:var(--accent)"></div>
+            <div>
+              <div class="announce-title">New Portal — Please Use App for Payments</div>
+              <div class="announce-body">Going forward, all fee payments must be done via this app. WhatsApp receipts will no longer be accepted.</div>
+              <div class="announce-time">3 days ago</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:20px"></div>
+      </div><!-- /view-parent -->
+
+      <!-- TUTOR VIEW -->
+      <div id="view-tutor" class="scroll-area" style="display:none">
+        <div style="height:14px"></div>
+        <div class="greeting-banner" style="background:linear-gradient(135deg,#1a7a6e 0%,#2DB89A 100%)">
+          <div class="date-badge">👨‍🏫 Tutor Portal</div>
+          <h1>Good morning, Ahmad! 👋</h1>
+          <p>3 classes scheduled this week</p>
+        </div>
+
+        <div class="section-header">
+          <h2>Today's Classes</h2>
+        </div>
+        <div class="p-section">
+          <div class="class-card">
+            <div class="cc-name">Mathematics Sec 3</div>
+            <div class="cc-meta">📍 Room A • 18 students enrolled</div>
+            <div class="cc-time">⏰ 10:00 AM – 11:30 AM</div>
+          </div>
+          <div class="class-card" style="border-left-color:var(--accent)">
+            <div class="cc-name">Mathematics Sec 2</div>
+            <div class="cc-meta">📍 Room B • 15 students enrolled</div>
+            <div class="cc-time">⏰ 2:00 PM – 3:30 PM</div>
+          </div>
+        </div>
+
+        <!-- Attendance Marking -->
+        <div class="card" style="margin-top:4px">
+          <div class="card-title">Mark Attendance — Maths Sec 3 (10:00 AM)</div>
+          <div id="attendanceList">
+            <!-- rendered by JS -->
+          </div>
+          <button class="btn-primary" style="margin-top:14px;font-size:14px" onclick="submitAttendance()">Save Attendance</button>
+        </div>
+
+        <!-- Schedule -->
+        <div class="card">
+          <div class="card-title">Weekly Schedule</div>
+          <div class="pay-history-item">
+            <div class="pay-hist-left">
+              <div class="pay-hist-icon" style="background:var(--primary-light);font-size:14px">Mon</div>
+              <div>
+                <div class="pay-hist-month">Maths Sec 2 &amp; Sec 3</div>
+                <div class="pay-hist-date">10:00 AM – 3:30 PM • Room A/B</div>
+              </div>
+            </div>
+          </div>
+          <div class="pay-history-item">
+            <div class="pay-hist-left">
+              <div class="pay-hist-icon" style="background:var(--accent-light);font-size:14px">Wed</div>
+              <div>
+                <div class="pay-hist-month">Maths Sec 4 (SPM)</div>
+                <div class="pay-hist-date">4:00 PM – 6:00 PM • Room C</div>
+              </div>
+            </div>
+          </div>
+          <div class="pay-history-item">
+            <div class="pay-hist-left">
+              <div class="pay-hist-icon" style="background:var(--warn-light);font-size:14px">Sat</div>
+              <div>
+                <div class="pay-hist-month">Maths Revision (All Levels)</div>
+                <div class="pay-hist-date">9:00 AM – 12:00 PM • Hall</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="height:20px"></div>
+      </div><!-- /view-tutor -->
+
+      <!-- ADMIN VIEW -->
+      <div id="view-admin" class="scroll-area" style="display:none">
+        <div style="height:14px"></div>
+        <div class="greeting-banner" style="background:linear-gradient(135deg,#1e3a6e 0%,#2952B3 100%)">
+          <div class="date-badge">🏫 Admin Dashboard</div>
+          <h1>BrightPath Centre 📊</h1>
+          <p>Overview for May 2026</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="card">
+          <div class="card-title">Overview</div>
+          <div class="stat-grid">
+            <div class="stat-box"><div class="num">42</div><div class="lbl">Total Students</div></div>
+            <div class="stat-box"><div class="num" style="color:var(--success)">38</div><div class="lbl">Paid (June)</div></div>
+            <div class="stat-box"><div class="num" style="color:var(--danger)">4</div><div class="lbl">Unpaid (June)</div></div>
+            <div class="stat-box"><div class="num" style="color:var(--accent)">6</div><div class="lbl">Tutors</div></div>
+          </div>
+        </div>
+
+        <!-- Payment Tracking -->
+        <div class="card">
+          <div class="card-title">Payment Tracking — June 2026</div>
+          <div id="adminPayList">
+            <!-- rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Student List -->
+        <div class="card">
+          <div class="card-title">Student List</div>
+          <div class="student-row">
+            <div class="student-ava">🧒</div>
+            <div><div class="student-name">Ethan Lim</div><div class="student-grade">Sec 3 • Maths, English</div></div>
+            <div class="pay-chip paid">PAID</div>
+          </div>
+          <div class="student-row">
+            <div class="student-ava">👧</div>
+            <div><div class="student-name">Mia Lim</div><div class="student-grade">Sec 1 • Maths, Science</div></div>
+            <div class="pay-chip paid">PAID</div>
+          </div>
+          <div class="student-row">
+            <div class="student-ava">👦</div>
+            <div><div class="student-name">Ryan Tan</div><div class="student-grade">Sec 4 • Maths</div></div>
+            <div class="pay-chip pending">UNPAID</div>
+          </div>
+          <div class="student-row">
+            <div class="student-ava">👩</div>
+            <div><div class="student-name">Aisha Malik</div><div class="student-grade">Sec 2 • English, BM</div></div>
+            <div class="pay-chip paid">PAID</div>
+          </div>
+          <div class="student-row">
+            <div class="student-ava">🧑</div>
+            <div><div class="student-name">Daniel Ong</div><div class="student-grade">Sec 3 • Maths</div></div>
+            <div class="pay-chip pending">UNPAID</div>
+          </div>
+        </div>
+
+        <!-- Class Assignment -->
+        <div class="card">
+          <div class="card-title">Class Assignments</div>
+          <div class="pay-history-item">
+            <div class="pay-hist-left">
+              <div class="pay-hist-icon" style="background:var(--primary-light);border-radius:10px;font-size:14px">📘</div>
+              <div><div class="pay-hist-month">Mathematics Sec 3</div><div class="pay-hist-date">Mr Ahmad Fariz • Room A</div></div>
+            </div>
+            <button class="btn-approve" onclick="this.textContent='✓ Done';this.classList.add('approved')">Edit</button>
+          </div>
+          <div class="pay-history-item">
+            <div class="pay-hist-left">
+              <div class="pay-hist-icon" style="background:var(--accent-light);border-radius:10px;font-size:14px">📗</div>
+              <div><div class="pay-hist-month">English Sec 3</div><div class="pay-hist-date">Ms Priya Nair • Room B</div></div>
+            </div>
+            <button class="btn-approve" onclick="this.textContent='✓ Done';this.classList.add('approved')">Edit</button>
+          </div>
+          <div class="pay-history-item">
+            <div class="pay-hist-left">
+              <div class="pay-hist-icon" style="background:var(--warn-light);border-radius:10px;font-size:14px">📙</div>
+              <div><div class="pay-hist-month">Science Sec 2</div><div class="pay-hist-date">Unassigned • Room C</div></div>
+            </div>
+            <button class="btn-approve" style="color:var(--warn);background:var(--warn-light)" onclick="this.textContent='✓ Assigned';this.style.color='var(--success)';this.style.background='var(--success-light)'">Assign</button>
+          </div>
+        </div>
+        <div style="height:20px"></div>
+      </div><!-- /view-admin -->
+
+      <!-- BOTTOM NAV -->
+      <div class="bottom-nav">
+        <button class="nav-item active" id="nav-home" onclick="setNavTab('home',this)">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" fill="var(--border)"/><path class="nav-fill" d="M9 21V12h6v9" fill="var(--text3)"/></svg>
+          <span>Home</span>
+        </button>
+        <button class="nav-item" id="nav-schedule" onclick="setNavTab('schedule',this)">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" fill="var(--border)"/><path d="M16 2v4M8 2v4M3 10h18" stroke="var(--text3)" stroke-width="2" stroke-linecap="round"/></svg>
+          <span>Schedule</span>
+        </button>
+        <button class="nav-item" id="nav-payment" onclick="setNavTab('payment',this)">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="3" fill="var(--border)"/><path d="M2 9h20" stroke="var(--text3)" stroke-width="2"/><circle cx="7" cy="14" r="1.5" fill="var(--text3)"/></svg>
+          <span>Payment</span>
+        </button>
+        <button class="nav-item" id="nav-profile" onclick="setNavTab('profile',this)">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="var(--border)"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="var(--border)"/></svg>
+          <span>Profile</span>
+        </button>
+      </div>
+
+    </div><!-- /screen-main -->
+
+  </div><!-- /app -->
+
+  <!-- ══ PAYMENT MODAL ══════════════════════════════════════════ -->
+  <div class="modal-overlay" id="payModal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle">Make Payment</div>
+        <button class="modal-close" onclick="closePayModal()">✕</button>
+      </div>
+
+      <!-- Step dots -->
+      <div class="step-indicator" id="stepIndicator">
+        <div class="step-dot active" id="dot1"></div>
+        <div class="step-dot" id="dot2"></div>
+        <div class="step-dot" id="dot3"></div>
+      </div>
+
+      <!-- STEP 1: Choose fee -->
+      <div class="modal-step active" id="step1">
+        <div class="modal-body">
+          <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Select the fee package you'd like to pay for:</p>
+
+          <div class="fee-option selected" onclick="selectFee(this,'RM 320.00','2 subjects (Maths + English)')">
+            <div style="display:flex;gap:12px;align-items:center">
+              <div class="fee-radio"></div>
+              <div class="fee-option-left">
+                <div class="fee-name">Standard Package</div>
+                <div class="fee-desc">2 subjects — Maths + English</div>
+              </div>
+            </div>
+            <div class="fee-option-right">
+              <div class="fee-amount">RM 320</div>
+              <div class="fee-vat">per month</div>
+            </div>
+          </div>
+
+          <div class="fee-option" onclick="selectFee(this,'RM 180.00','1 subject (Maths only)')">
+            <div style="display:flex;gap:12px;align-items:center">
+              <div class="fee-radio"></div>
+              <div class="fee-option-left">
+                <div class="fee-name">Single Subject</div>
+                <div class="fee-desc">1 subject — Maths only</div>
+              </div>
+            </div>
+            <div class="fee-option-right">
+              <div class="fee-amount">RM 180</div>
+              <div class="fee-vat">per month</div>
+            </div>
+          </div>
+
+          <div class="fee-option" onclick="selectFee(this,'RM 450.00','3 subjects (Maths + English + Science)')">
+            <div style="display:flex;gap:12px;align-items:center">
+              <div class="fee-radio"></div>
+              <div class="fee-option-left">
+                <div class="fee-name">Premium Package</div>
+                <div class="fee-desc">3 subjects — incl. Science</div>
+              </div>
+            </div>
+            <div class="fee-option-right">
+              <div class="fee-amount">RM 450</div>
+              <div class="fee-vat">per month</div>
+            </div>
+          </div>
+
+          <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:12px 14px;font-size:13px;color:var(--text2);margin-bottom:20px">
+            📅 Payment for: <strong style="color:var(--text)">June 2026</strong><br>
+            👦 Student: <strong style="color:var(--text)">Ethan Lim</strong>
+          </div>
+
+          <button class="btn-primary" onclick="goStep(2)">Continue →</button>
+          <div style="height:16px"></div>
+        </div>
+      </div>
+
+      <!-- STEP 2: Bank transfer instructions -->
+      <div class="modal-step" id="step2">
+        <div class="modal-body">
+          <div class="info-note">
+            <span>⚠️</span>
+            Transfer the exact amount to the account below, then tap "I Have Paid". Payment will be verified within 1 business day.
+          </div>
+          <div class="bank-info-card">
+            <div class="bank-row">
+              <span class="bank-key">Bank</span>
+              <span class="bank-val">Maybank</span>
+            </div>
+            <div class="bank-row">
+              <span class="bank-key">Account Name</span>
+              <span class="bank-val">BrightPath Tuition Sdn Bhd</span>
+            </div>
+            <div class="bank-row">
+              <span class="bank-key">Account Number</span>
+              <span class="bank-val">1122-3344-5566</span>
+            </div>
+            <div class="bank-row">
+              <span class="bank-key">Reference</span>
+              <span class="bank-val">ETHAN-JUN26</span>
+            </div>
+            <div class="bank-row">
+              <span class="bank-key">Amount</span>
+              <span class="bank-val highlight" id="transferAmount">RM 320.00</span>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;margin-bottom:20px">
+            <div style="flex:1;background:var(--primary-light);border-radius:var(--radius-sm);padding:12px;text-align:center;cursor:pointer" onclick="showToast('Reference copied!')">
+              <div style="font-size:18px">📋</div>
+              <div style="font-size:11px;font-weight:700;color:var(--primary);margin-top:4px">Copy Ref</div>
+            </div>
+            <div style="flex:1;background:var(--accent-light);border-radius:var(--radius-sm);padding:12px;text-align:center;cursor:pointer" onclick="showToast('Opening Maybank app…')">
+              <div style="font-size:18px">📱</div>
+              <div style="font-size:11px;font-weight:700;color:var(--accent);margin-top:4px">Open M2U</div>
+            </div>
+            <div style="flex:1;background:var(--warn-light);border-radius:var(--radius-sm);padding:12px;text-align:center;cursor:pointer" onclick="showToast('Account number copied!')">
+              <div style="font-size:18px">📄</div>
+              <div style="font-size:11px;font-weight:700;color:var(--warn);margin-top:4px">Copy Acc</div>
+            </div>
+          </div>
+
+          <button class="btn-primary" onclick="goStep(3)" style="background:linear-gradient(135deg,var(--success),var(--accent))">
+            ✅ I Have Paid
+          </button>
+          <button onclick="goStep(1)" style="width:100%;height:44px;margin-top:10px;background:none;border:1.5px solid var(--border);border-radius:var(--radius-md);font-family:var(--font);font-size:14px;font-weight:600;color:var(--text2);cursor:pointer">← Back</button>
+          <div style="height:16px"></div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Success -->
+      <div class="modal-step" id="step3">
+        <div class="success-state">
+          <div class="success-icon">✅</div>
+          <div class="success-title">Payment Submitted!</div>
+          <div class="success-sub" id="successSub">Your payment of <strong id="paidAmountDisplay">RM 320.00</strong> for June 2026 has been submitted and is pending verification.</div>
+
+          <div class="receipt-card" id="receiptPreview">
+            <div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:10px;text-align:center">🧾 PAYMENT RECEIPT</div>
+            <div class="receipt-row"><span class="receipt-key">Receipt No.</span><span class="receipt-val" id="receiptNo">BP-2026-0542</span></div>
+            <div class="receipt-row"><span class="receipt-key">Student</span><span class="receipt-val">Ethan Lim</span></div>
+            <div class="receipt-row"><span class="receipt-key">Month</span><span class="receipt-val">June 2026</span></div>
+            <div class="receipt-row"><span class="receipt-key">Package</span><span class="receipt-val" id="receiptPackage">Standard (2 subjects)</span></div>
+            <div class="receipt-row"><span class="receipt-key">Date</span><span class="receipt-val">17 May 2026</span></div>
+            <div class="receipt-row receipt-total"><span class="receipt-key">Total Paid</span><span class="receipt-val" id="receiptTotal">RM 320.00</span></div>
+          </div>
+
+          <button class="btn-primary" onclick="closePayModal();markPaid()" style="margin-bottom:12px">
+            Done
+          </button>
+          <button class="btn-receipt" onclick="fakeDownload();showToast('Receipt downloaded!')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3v13m0 0l-4-4m4 4l4-4" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/><path d="M3 20h18" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/></svg>
+            Download Receipt (PDF)
+          </button>
+          <div style="height:16px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+</div><!-- /phone -->
+
+<script>
+  // ── STATE ─────────────────────────────────────────────────────
+  let currentRole = 'parent';
+  let loginRole = 'parent';
+  let paymentPaid = false;
+  let selectedFeeAmount = 'RM 320.00';
+  let selectedFeeDesc = '2 subjects (Maths + English)';
+  let currentStep = 1;
+
+  const childData = [
+    {
+      name: 'Ethan', emoji: '🧒',
+      class: 'Mathematics Sec 3', tutor: 'Mr Ahmad Fariz',
+      time: '10:00 AM', dur: '90 min',
+      class2: 'English Sec 3', tutor2: 'Ms Priya Nair',
+      present: 14, late: 2, absent: 1, rate: 82,
+    },
+    {
+      name: 'Mia', emoji: '👧',
+      class: 'Mathematics Sec 1', tutor: 'Mr Ahmad Fariz',
+      time: '2:00 PM', dur: '90 min',
+      class2: 'Science Sec 1', tutor2: 'Ms Chen Li',
+      present: 16, late: 1, absent: 0, rate: 94,
+    }
+  ];
+
+  // ── ATTENDANCE (tutor) ────────────────────────────────────────
+  const tutorStudents = [
+    'Ethan Lim', 'Ryan Tan', 'Aisha Malik', 'Daniel Ong', 'Sophie Lee',
+    'James Wong', 'Priya Kumar', 'Ali Hassan'
+  ];
+  const attState = {};
+
+  function renderAttendanceList() {
+    const list = document.getElementById('attendanceList');
+    list.innerHTML = tutorStudents.map(name => `
+      <div class="student-att-row">
+        <div class="student-att-name">${name}</div>
+        <div class="att-btns">
+          <button class="btn-present ${attState[name]==='present'?'active':''}"
+            onclick="markAtt('${name}','present',this)">Present</button>
+          <button class="btn-absent ${attState[name]==='absent'?'active':''}"
+            onclick="markAtt('${name}','absent',this)">Absent</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function markAtt(name, status, btn) {
+    attState[name] = status;
+    renderAttendanceList();
+  }
+
+  function submitAttendance() {
+    showToast('Attendance saved ✓');
+  }
+
+  // ── ADMIN PAY LIST ────────────────────────────────────────────
+  const adminPayments = [
+    { name: 'Sarah Lim', student: 'Ethan Lim', amt: 'RM 320', status: 'pending' },
+    { name: 'David Tan', student: 'Ryan Tan', amt: 'RM 180', status: 'unpaid' },
+    { name: 'Rosnah Malik', student: 'Aisha Malik', amt: 'RM 320', status: 'approved' },
+    { name: 'Ong Beng Huat', student: 'Daniel Ong', amt: 'RM 320', status: 'unpaid' },
+    { name: 'Chen Wei Ming', student: 'Sophie Lee', amt: 'RM 450', status: 'approved' },
+  ];
+
+  function renderAdminPayList() {
+    const list = document.getElementById('adminPayList');
+    list.innerHTML = adminPayments.map((p, i) => `
+      <div class="admin-pay-row">
+        <div>
+          <div class="admin-pay-name">${p.student}</div>
+          <div class="admin-pay-sub">Parent: ${p.name}</div>
+        </div>
+        <div class="admin-pay-right">
+          <div class="admin-pay-amt">${p.amt}</div>
+          ${p.status === 'approved' 
+            ? '<button class="btn-approve approved">✓ Approved</button>'
+            : p.status === 'pending'
+            ? `<button class="btn-approve" onclick="approvePayment(${i},this)">Approve</button>`
+            : '<button class="btn-approve" style="color:var(--danger);background:var(--danger-light)">Unpaid</button>'
+          }
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function approvePayment(i, btn) {
+    adminPayments[i].status = 'approved';
+    btn.textContent = '✓ Approved';
+    btn.classList.add('approved');
+    showToast('Payment approved ✓');
+  }
+
+  // ── LOGIN ─────────────────────────────────────────────────────
+  function setLoginRole(role, btn) {
+    loginRole = role;
+    document.querySelectorAll('#loginRoles .role-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function doLogin() {
+    const names = { parent: 'Sarah Lim', tutor: 'Ahmad Fariz', admin: 'Admin' };
+    const avatars = { parent: 'S', tutor: 'A', admin: 'AD' };
+    document.getElementById('mainUserName').textContent = names[loginRole];
+    document.getElementById('mainAvatar').textContent = avatars[loginRole];
+    document.getElementById('statusBar').style.display = 'flex';
+    showScreen('main');
+
+    // Auto-select the right role tab
+    document.querySelectorAll('.role-tab').forEach((t,i) => {
+      const roles = ['parent','tutor','admin'];
+      t.classList.toggle('active', roles[i] === loginRole);
+    });
+    switchToView(loginRole);
+    renderAttendanceList();
+    renderAdminPayList();
+  }
+
+  // ── SCREEN SWITCHING ──────────────────────────────────────────
+  function showScreen(name) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + name).classList.add('active');
+  }
+
+  function switchRole(role, btn) {
+    document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    switchToView(role);
+  }
+
+  function switchToView(role) {
+    ['parent','tutor','admin'].forEach(r => {
+      document.getElementById('view-' + r).style.display = r === role ? 'block' : 'none';
+    });
+    currentRole = role;
+  }
+
+  // ── CHILD TABS ────────────────────────────────────────────────
+  function selectChild(idx, el) {
+    if (idx >= childData.length) return;
+    document.querySelectorAll('.child-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    const c = childData[idx];
+    document.getElementById('classTime').textContent = c.time;
+    document.getElementById('classDur').textContent = c.dur;
+    document.getElementById('className').textContent = c.class;
+    document.getElementById('classTutor').textContent = c.tutor;
+    document.getElementById('className2').textContent = c.class2;
+    document.getElementById('classTutor2').textContent = c.tutor2;
+    document.getElementById('attPresent').textContent = c.present;
+    document.getElementById('attLate').textContent = c.late;
+    document.getElementById('attAbsent').textContent = c.absent;
+    document.getElementById('attRate').textContent = c.rate + '%';
+    document.getElementById('attBar').style.width = c.rate + '%';
+    document.getElementById('attBar').style.background = c.rate > 85
+      ? 'linear-gradient(90deg,var(--success),var(--accent))'
+      : 'linear-gradient(90deg,var(--warn),#F59E0B)';
+  }
+
+  // ── BOTTOM NAV ────────────────────────────────────────────────
+  function setNavTab(tab, btn) {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    btn.classList.add('active');
+    if (tab === 'payment') openPayModal();
+  }
+
+  // ── PAYMENT MODAL ─────────────────────────────────────────────
+  function openPayModal() {
+    if (paymentPaid) { showToast('Already paid! Download your receipt below.'); return; }
+    const overlay = document.getElementById('payModal');
+    overlay.style.display = 'flex';
+    requestAnimationFrame(() => {
+      overlay.classList.add('open', 'visible');
+    });
+    goStep(1);
+  }
+
+  function closePayModal() {
+    const overlay = document.getElementById('payModal');
+    overlay.classList.remove('visible');
+    setTimeout(() => { overlay.classList.remove('open'); overlay.style.display = 'none'; }, 400);
+  }
+
+  function goStep(n) {
+    currentStep = n;
+    ['step1','step2','step3'].forEach((id, i) => {
+      document.getElementById(id).classList.toggle('active', i+1 === n);
+    });
+    ['dot1','dot2','dot3'].forEach((id, i) => {
+      const dot = document.getElementById(id);
+      dot.classList.toggle('active', i+1 === n);
+      dot.classList.toggle('done', i+1 < n);
+    });
+    const titles = ['', 'Choose Package', 'Bank Transfer', 'Payment Submitted'];
+    document.getElementById('modalTitle').textContent = titles[n];
+    if (n === 2) {
+      document.getElementById('transferAmount').textContent = selectedFeeAmount;
+    }
+    if (n === 3) {
+      const num = 'BP-2026-0' + Math.floor(500 + Math.random() * 100);
+      document.getElementById('receiptNo').textContent = num;
+      document.getElementById('receiptTotal').textContent = selectedFeeAmount;
+      document.getElementById('paidAmountDisplay').textContent = selectedFeeAmount;
+      document.getElementById('receiptPackage').textContent = selectedFeeDesc;
+    }
+  }
+
+  function selectFee(el, amount, desc) {
+    document.querySelectorAll('.fee-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedFeeAmount = amount;
+    selectedFeeDesc = desc;
+  }
+
+  function markPaid() {
+    paymentPaid = true;
+    // Update payment card
+    document.getElementById('payHeader').className = 'pay-header paid';
+    document.getElementById('payBadge').className = 'pay-status-badge paid';
+    document.getElementById('payBadge').textContent = 'PAID';
+    document.getElementById('payAmount').textContent = selectedFeeAmount;
+    document.getElementById('payDue').innerHTML = 'Paid on <strong>17 May 2026</strong> — Thank you! 🎉';
+    document.getElementById('payBtn').className = 'btn-pay paid';
+    document.getElementById('payBtn').innerHTML = '✓ Payment Received';
+    document.getElementById('payBtn').onclick = null;
+    document.getElementById('receiptBtn').style.display = 'flex';
+    document.getElementById('juneHistoryRow').style.display = 'flex';
+    document.getElementById('juneAmount').textContent = selectedFeeAmount;
+    showToast('Payment marked as submitted ✓');
+
+    // Admin: mark Sarah's payment as pending
+    adminPayments[0].status = 'pending';
+    renderAdminPayList();
+  }
+
+  function fakeDownload() {
+    showToast('Receipt downloaded! (Prototype mode)');
+  }
+
+  // ── TOAST ─────────────────────────────────────────────────────
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  // ── INIT ──────────────────────────────────────────────────────
+  // Update clock every second
+  function updateClock() {
+    const d = new Date();
+    let h = d.getHours(), m = d.getMinutes();
+    document.querySelector('.status-bar .time').textContent =
+      (h > 12 ? h - 12 : h || 12) + ':' + String(m).padStart(2, '0');
+  }
+  setInterval(updateClock, 1000);
+
+  // Close modal on overlay click
+  document.getElementById('payModal').addEventListener('click', function(e) {
+    if (e.target === this) closePayModal();
+  });
+
+  // Prevent scroll bleed
+  document.getElementById('phone').addEventListener('touchmove', function(e) {
+    e.stopPropagation();
+  }, { passive: true });
+</script>
+</body>
+</html>
